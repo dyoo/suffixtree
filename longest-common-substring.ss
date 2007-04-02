@@ -6,12 +6,15 @@
            (lib "contract.ss"))
   
   (provide/contract [longest-common-substring
-                     (string? string? . -> . string?)])
+                     (() (listof string?) . ->* . (string?))])
   
   
+  ;; FIXME: put this in the suffixtree API
   (define (sentinel? ch)
     (not (char? ch)))
   
+  
+  ;; FIXME: put this in the suffixtree API
   (define (label-length/removing-sentinel label)
     (cond
       [(= 0 (label-length label)) 0]
@@ -23,11 +26,12 @@
   
   ;; longest-common-substring: string string -> string
   ;; Returns the longest common substring between s1 and s2.
-  (define (longest-common-substring s1 s2)
+  (define (longest-common-substring . words)
     (let-values ([(tree labels annotations)
-                  (make-tree/annotations (list s1 s2))])
-      (local ((define (shared? node)
-                (= 2 (length (hash-table-get annotations node))))
+                  (make-tree/annotations words)])
+      (local ((define N (length words))
+              (define (shared? node)
+                (= N (length (hash-table-get annotations node))))
               (define best-so-far '())
               (define best-so-far-length 0))
         ;; loop: node (listof label) number -> void
@@ -69,7 +73,8 @@
   ;; that node belongs to.
   (define (annotate-tree a-tree original-labels)
     (local ((define ht (make-hash-table))
-            
+
+            ;; FIXME: optimize using a hash table lookup structure.
             (define (label->original-label l)
               (find (lambda (o) (label-source-eq? l o))
                     original-labels)))
