@@ -13,10 +13,12 @@
     (not (char? ch)))
   
   (define (label-length/removing-sentinel label)
-    (cond [(sentinel? (label-ref label (sub1 (label-length label))))
-           (sub1 (label-length label))]
-          [else
-           (label-length label)]))
+    (cond
+      [(= 0 (label-length label)) 0]
+      [(sentinel? (label-ref label (sub1 (label-length label))))
+       (sub1 (label-length label))]
+      [else
+       (label-length label)]))
   
   
   ;; longest-common-substring: string string -> string
@@ -39,7 +41,7 @@
                              (loop n
                                    (cons (node-up-label node) labels)
                                    (+ len (label-length/removing-sentinel
-                                           (node-up-label n)))))
+                                           (node-up-label node)))))
                            (node-children node))]
                 [else
                  (when (> len best-so-far-length)
