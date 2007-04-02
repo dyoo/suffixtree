@@ -6,15 +6,14 @@
            (lib "contract.ss"))
   
   (provide/contract [longest-common-substring
-                     (string string . -> . string)])
+                     (string? string? . -> . string?)])
   
   
   (define (sentinel? ch)
     (not (char? ch)))
   
   (define (label-length/removing-sentinel label)
-    (cond [(sentinel?
-            (label-ref label (sub1 (label-length label))))
+    (cond [(sentinel? (label-ref label (sub1 (label-length label))))
            (sub1 (label-length label))]
           [else
            (label-length label)]))
