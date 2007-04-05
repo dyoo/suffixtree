@@ -34,12 +34,13 @@
   (provide/contract (vector->label (-> vector? label?)))
   (provide/contract (vector->label/with-sentinel (-> vector? label?)))
   (provide/contract (label->string (-> label? string?)))
+  (provide/contract [label->string/removing-sentinel (-> label? string?)])
   (provide/contract (label->vector (-> label? vector?)))
   (provide/contract (label-length (-> label? natural-number/c)))
-
+  
   ;; FIXME: refine label-ref contract to make sure input reference is in bounds.
   (provide/contract (label-ref (-> label? natural-number/c label-element?)))
-
+  
   ;; FIXME: refine sublabel contract to make sure slice is in bounds.
   (provide/contract
    (sublabel (case->
@@ -70,20 +71,26 @@
           (else
            (error 'make-label "Don't know how to make label from ~S" label-element))))
   
-
+  
+  (define (make-sentinel)
+    (gensym 'sentinel))
+  
+  (define (sentinel? datum)
+    (symbol? datum))
+  
   ;; vector->label vector
   ;; Constructs a new label from the input vector.
   (define (vector->label vector)
     (make-label (vector->immutable-vector vector) 0 (vector-length vector)))
   
-
+  
   ;; vector->label vector
   ;; Constructs a new label from the input vector, with a sentinel
   ;; symbol at the end.
   (define (vector->label/with-sentinel vector)
     (let* ((N (vector-length vector))
            (V (make-vector (add1 N))))
-      (vector-set! V N (gensym 'sentinel))
+      (vector-set! V N (make-sentinel))
       (let loop ((i 0))
         (if (< i N)
             (begin (vector-set! V i (vector-ref vector i))
@@ -185,6 +192,14 @@
     (list->string (vector->list (label->vector label))))
 
   
+  (define (label->string/removing-sentinel label)
+    (let* ([ln (label-length label)]
+           [N (if (and (> ln 0) (sentinel? (label-ref label (sub1 ln))))
+                  (sub1 ln)
+                  ln)])
+      (build-string N (lambda (i) (label-ref label i)))))
+  
+  
   ;; label->vector: label -> vector
   ;; Extracts the vector that the label represents.
   ;; Note: this operation is expensive: don't use it except for debugging.
@@ -198,7 +213,7 @@
               (loop (add1 i)))
             (vector->immutable-vector buffer)))))
   
-
+  
   ;; label-copy: label->label
   ;; Returns a copy of the label.
   (define (label-copy label)

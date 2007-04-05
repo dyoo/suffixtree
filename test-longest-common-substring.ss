@@ -27,6 +27,10 @@
       (longest-common-substring "" "") "")
      
      (test-equal?
+      "silly case"
+      (longest-common-substring "hello") "hello")
+     
+     (test-equal?
       "another empty case"
       (longest-common-substring "1" "0") "")
      

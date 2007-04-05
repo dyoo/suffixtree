@@ -1,3 +1,4 @@
-(load-relative "test-suffixtree.ss")
-(load-relative "test-util.ss")
-(load-relative "private/test-all.ss")
+(module test-all mzscheme
+  (require "test-suffixtree.ss")
+  (require "test-util.ss")
+  (require "private/test-all.ss"))

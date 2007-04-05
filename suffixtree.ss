@@ -43,16 +43,19 @@
   
   (provide/contract (label->string (-> label? string?)))
   (define label->string l:label->string)
-                     
+  
+  (provide/contract (label->string/removing-sentinel (-> label? string?)))
+  (define label->string/removing-sentinel l:label->string/removing-sentinel)
+  
   (provide/contract (label-equal? (-> label? label? boolean?)))
   (define label-equal? l:label-equal?)
-
+  
   (provide/contract (label-length (-> label? natural-number/c)))
   (define label-length l:label-length)
-
+  
   (provide/contract (label-ref (-> label? natural-number/c label-element?)))
   (define label-ref l:label-ref)
-
+  
   (provide/contract (sublabel (case->
                                (-> label? natural-number/c natural-number/c label?)
                                (-> label? natural-number/c label?))))
