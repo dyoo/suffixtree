@@ -1,14 +1,14 @@
 (module test-common-definitions mzscheme
   ;; test infrastructure stuff.
   
-  (require (planet "test.ss" ("schematics" "schemeunit.plt" 1 1))
-           (planet "text-ui.ss" ("schematics" "schemeunit.plt" 1 1))
+  (require (planet "test.ss" ("schematics" "schemeunit.plt" 2 6))
+           (planet "text-ui.ss" ("schematics" "schemeunit.plt" 2 6))
            "structs.ss"
            "label.ss")
 
   (provide (all-defined)
-           (all-from (planet "test.ss" ("schematics" "schemeunit.plt" 1 1)))
-           (all-from (planet "text-ui.ss" ("schematics" "schemeunit.plt" 1 1)))
+           (all-from (planet "test.ss" ("schematics" "schemeunit.plt" 2 6)))
+           (all-from (planet "text-ui.ss" ("schematics" "schemeunit.plt" 2 6)))
            (all-from "structs.ss")
            (all-from "label.ss"))
 
@@ -51,7 +51,7 @@
 
 
 
-  (define-simple-assertion (assert-label-equal? label-1 label-2)
+  (define-simple-check (check-label-equal? label-1 label-2)
     (label-equal? label-1 label-2))
 
 
