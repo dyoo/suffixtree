@@ -14,8 +14,7 @@
                         #:requires
                         (list))))))
 
-
-@title{suffixtree : suffix trees in linear time}
+@title{Suffix trees with Ukkonen's algorithm}
 
 @author+email["Danny Yoo" "dyoo@hashcollision.org"]
 
@@ -34,7 +33,7 @@ Let's rush into a minimal example:
 (tree-add! tree (string->label "00010010$"))
 (define root (tree-root tree))
 (node-children root)
-(string->label (node-up-label (car (node-children root))))
+(label->string (node-up-label (car (node-children root))))
 ]
 
 
