@@ -11,6 +11,7 @@
 (require "label.rkt")
 (require "structs.rkt")
 (require (prefix-in ukkonen: "ukkonen2.rkt"))
+(require profile)
 
 
 (define (time-implementation string)
@@ -46,7 +47,7 @@
 (define (time-trial)
   (let* ((step 10)
          (start 100)
-         (stop 2000)
+         (stop 10000)
          (strings (let loop ((k start))
                    (if (< k stop)
                        (cons (random-string k)
@@ -58,5 +59,5 @@
 
 
 
-(write (time-trial))
+(profile-thunk (lambda () (write (time-trial))))
 (newline)

@@ -1,6 +1,5 @@
 #lang racket/base
 
-(require racket/contract)
 
 ;; Label implementation.  Labels are like strings, but also allow for
 ;; efficient shared slicing.
@@ -24,44 +23,28 @@
 (define label-element-equal? equal?)
 
 
-(provide label?)
-(provide/contract (rename ext:make-label make-label
-                          (-> label-element? label?)))
-(provide/contract (label-element? (-> any/c boolean?)))
-(provide/contract (label-element-equal?
-                   (-> label-element? label-element? boolean?)))
-(provide/contract (string->label (-> string? label?)))
-(provide/contract (string->label/with-sentinel (-> string? label?)))
-(provide/contract (vector->label (-> vector? label?)))
-(provide/contract (vector->label/with-sentinel (-> vector? label?)))
-(provide/contract (label->string (-> label? string?)))
-(provide/contract [label->string/removing-sentinel (-> label? string?)])
-(provide/contract (label->vector (-> label? vector?)))
-(provide/contract (label-length (-> label? natural-number/c)))
-
-;; FIXME: refine label-ref contract to make sure input reference is in bounds.
-(provide/contract (label-ref (-> label? natural-number/c label-element?)))
-
-;; FIXME: refine sublabel contract to make sure slice is in bounds.
-(provide/contract
- (sublabel (case->
-            (-> label? natural-number/c natural-number/c label?)
-            (-> label? natural-number/c label?))))
-(provide/contract
- (sublabel! (case->
-             (-> label? natural-number/c natural-number/c void?)
-             (-> label? natural-number/c void?))))
-
-(provide/contract (label-prefix? (-> label? label? boolean?)))
-(provide/contract (label-equal? (-> label? label? boolean?)))
-(provide/contract (label-empty? (-> label? boolean?)))
-(provide/contract (label-copy (-> label? label?)))
-
-(provide/contract (label-ref-at-end? (-> label? natural-number/c boolean?)))
-
-(provide/contract (label-source-id (-> label? integer?)))
-
-(provide/contract (label-same-source? (-> label? label? boolean?)))
+(provide label?
+         (rename-out [ext:make-label make-label])
+         label-element?
+         label-element-equal?
+         string->label
+         string->label/with-sentinel
+         vector->label
+         vector->label/with-sentinel
+         label->string
+         label->string/removing-sentinel
+         label->vector
+         label-length
+         label-ref
+         sublabel
+         sublabel!
+         label-prefix?
+         label-equal?
+         label-empty?
+         label-copy
+         label-ref-at-end?
+         label-source-id
+         label-same-source?)
 
 
 ;; make-label: label-element -> label
