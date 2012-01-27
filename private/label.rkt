@@ -103,7 +103,7 @@
 ;; Constructs a new label from the input string.
 (define string->label
   (let ((f (compose vector->label list->vector string->list)))
-    (lambda (string) (f string))))
+    (lambda (str) (f str))))
 
 
 ;; string->label/with-sentinel: string -> label
@@ -114,7 +114,7 @@
 ;; the sentinel character interferes with string concatenation
 (define string->label/with-sentinel
   (let ((f (compose vector->label/with-sentinel list->vector string->list)))
-    (lambda (string) (f string))))
+    (lambda (str) (f str))))
 
 
 ;; label-length: label -> number?

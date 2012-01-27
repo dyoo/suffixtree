@@ -5,11 +5,9 @@
          racket/local
          (only-in srfi/1 find lset-union))
 
-  
-(provide/contract [longest-common-substring
-                   (() #:rest (listof string?) . ->* . string?)]
-                  
-                  [longest-common-sublabels
+(provide longest-common-substring)
+
+(provide/contract [longest-common-sublabels
                    ((listof label?) . -> . (listof label?))])
 
 

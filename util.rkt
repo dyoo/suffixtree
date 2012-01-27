@@ -12,7 +12,7 @@
 
 ;; longest-common-substring: string string -> string
 ;; Returns the longest common substring between the two strings.
-(provide/contract (longest-common-substring (-> string string string)))
+(provide/contract (longest-common-substring (-> string? string? string?)))
 (define (longest-common-substring s1 s2)
   (label->string (longest-common-sublabel (string->label/with-sentinel s1)
                                           (string->label/with-sentinel s2))))
