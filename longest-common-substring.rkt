@@ -7,7 +7,7 @@
 
   
 (provide/contract [longest-common-substring
-                   (() (listof string?) . ->* . string?)]
+                   (() #:rest (listof string?) . ->* . string?)]
                   
                   [longest-common-sublabels
                    ((listof label?) . -> . (listof label?))])
