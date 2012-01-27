@@ -93,56 +93,57 @@ utilities and applications.
 The main structures are trees, nodes, and labels.
 
 @subsection{Trees}
+@declare-exporting/this-package[main]
 
 A suffix tree consists of a root.  This implementation allows multiple
 labels to be added to the tree.
 
-> (make-tree)
+@defproc[(make-tree) tree]{
+Constructs an empty suffix tree with a single root node.  
+}
 
-    Constructs an empty suffix tree with a single root node.  
 
-> (tree? datum)
-
+@defproc[(tree? [datum any]) boolean]{
     Returns #t if datum is a suffix tree.
+}
 
-> (tree-root tree)
-
+@defproc[(tree-root [a-tree tree]) node]{
     Selects the root node from a tree.
+}
 
-> (tree-add! tree label)
-
+@defproc[(tree-add! [a-tree tree] [a-label label]) void]{
     Adds a label and all of its nonempty suffixes to the tree.
+}
 
-> (tree-walk tree label succeed-f fail-f)
 
+@defproc[(tree-walk [a-tree tree] [a-label label] [succeed-f (node number -> A)] [fail-f (node number number -> B)]) (or/c A B)]{
     Starting from the tree-root, walks along a path whose path
     label exactly matches the input label.
 
-    If the label matched completely, calls succeed-f with the
+    If the label matched completely, calls @racket[succeed-f] with the
     position where the matching had succeeded.
 
-        succeed-f node up-label-offset -> A
 
-    If the label mismatched, calls fail-f with the tree position where
+    If the label mismatched, calls @racket[fail-f] with the tree position where
     the matching had failed.
 
-        fail-f: node up-label-offset input-label-offset -> B
+    The return value from tree-walk will either be @racket[A] or @racket[B].
+}
 
-    The return value from tree-walk will either be A or B.
+@defproc[(tree-contains? [a-tree tree] [a-label label]) boolean]{
 
+    Returns @racket[#t] if a path exists starting from the tree-root of the
+    tree whose path-label exactly matches @racket[a-label].
 
-> (tree-contains? tree label)
+    @racket[tree-contains?] is an application of @racket[tree-walk]:
 
-    Returns #t if a path exists starting from the tree-root of the
-    tree whose path-label exactly matches label.
-
-    tree-contains? is an application of tree-walk:
-
+@racketblock[
         (define (tree-contains? tree label)
           (tree-walk tree label 
                      (lambda (node up-label-offset) #t)
                      (lambda (node up-label-offset input-label-offset) #f)))
-
+]
+}
 
 
 @subsection{Nodes}
@@ -151,30 +152,32 @@ Nodes form the structure of the suffix tree, and link up children
 nodes as well.  Every internal node I of a suffix tree will also have
 a suffix-node whose path-label is the immediate suffix of node I.
 
-> (node-up-label node)
+@defproc[(node-up-label [a-node node]) label]{
 
     Selects the label of the edge that connects this node to its
     parent.  The up-label of the root node is empty.
+}
 
-> (node-parent node)
 
+@defproc[(node-parent [a-node node]) (or/c node #f)]{
     Selects the parent of this node.  The root of a suffix tree has no
-    parent, so (node-parent (tree-root tree)) returns #f.
+    parent, so @racket[(node-parent (tree-root tree))] returns @racket[#f].
+}
 
-> (node-suffix-link node)
-
+@defproc[(node-suffix-link [a-node node]) node]{
     Selects the suffix node of this node.  If the suffix-link is not
     set, returns #f.
+}
 
-> (node-find-child node label-element)
-
+@defproc[(node-find-child [a-node node] [a-label-element label-element]) (or/c node #f)]{
     Selects the child whose up-label starts with the label-element.  If no
-    such child can be found, returns #f.
+    such child can be found, returns @racket[#f].
+}
 
-> (node-children node)
-
+@defproc[(node-children [a-node node]) (listof node)]{
     Selects the list of children nodes to this node.  If the node is a
-    leaf, returns ().
+    leaf, returns @racket['()].
+}
 
 
 @subsection{Labels}
@@ -185,95 +188,101 @@ common label-elements will be characters.  Labels can be sublabeled
 with efficiency.
 
 
-> (string->label string)
-
+@defproc[(string->label [a-string string]) label]{
     Constructs a label from a string.  Each of the label-elements of
     this label will be a character.
+}
 
-> (string->label/with-sentinel string)
+@defproc[(string->label/with-sentinel [a-str string]) label]{
 
     Constructs a label from a string with a trailing sentinel
     character to guarantee that all suffixes can be explicitely
     represented in a suffix tree.  (See the Caveats section below for
     details.)
 
-    Note that label->string can't be directly used on a label with a
+    Note that @racket[label->string] can't be directly used on a label with a
     sentinel.
+}
 
-> (label->string label)
-
+@defproc[(label->string [a-label label]) string]{
     Constructs a string from a label, assuming that all label-elements
     of the string are characters.
+}
 
-> (vector->label vector)
 
+@defproc[(vector->label [a-vec vector]) label]{
     Constructs a label from a vector.
+}
 
-> (vector->label/with-sentinel vector)
+@defproc[(vector->label/with-sentinel [a-vec vector]) label]{
 
     Constructs a label from a vector with a trailing sentinel character.
+}
 
-> (label->vector label)
-
+@defproc[(label->vector [a-label label]) vector]{
     Selects a vector of the label-elements that represent the label.
     This vector is immutable.
+}
 
-> (sublabel label left-offset [right-offset])
+@defproc[(sublabel [a-label label] [left-offset number] [right-offset number (label-length label)]) label]{
 
     Derives a new sliced label from the parent label, along the
-    half-open interval [left-offset, right-offset).
+    half-open interval [@racket[left-offset], @racket[right-offset]).
 
-    If right-offset is omitted, it defaults to (label-length label).
+    If right-offset is omitted, it defaults to @racket[(label-length label)].
 
-    (<= left-offset right-offset) should be true.
+    @racket[(<= left-offset right-offset)] should be @racket[#t].
+}
 
-> (label-ref label offset)
-
+@defproc[(label-ref [a-label label] [a-offset number]) label-element]{
     Returns the label's label-element at that offset.
+}
 
-> (label-length label)
-
+@defproc[(label-length [a-label label]) number]{
     Returns the length of a label.
+}
 
-> (label-equal? label-1 label-2)
+@defproc[(label-equal? [label-1 label] [label-2 label]) boolean]{
+    Produce true if the two labels have equal content.
 
     Warning: two labels may have equal content, but come from
     different sources.
+}
 
-> (label-source-eq? label-1 label-2)
+@defproc[(label-source-eq? [label-1 label] [label-2 label]) boolean]{
 
-    Returns #t if both labels share a common derivation from
+    Returns @racket[#t] if both labels share a common derivation from
     sublabeling.
+}
 
-> (label-source-id label)
+@defproc[(label-source-id [a-label label]) number]{
 
     Returns an numeric identifier for this label.
 
-    (label-source-eq? label-1 label-2) 
+    @racket[(label-source-eq? label-1 label-2)]
 
          logically implies:
 
-    (= (label-source-id label-1) (label-source-id label-2))
-
+    @racket[(= (label-source-id label-1) (label-source-id label-2))]
+}
 
 
 @subsection{Other utilities}
 
 This module provides some example applications of suffix trees.
 
-> (longest-common-substring string-1 string-2)
-
+@defproc[(longest-common-substring [string-1 string] [string-2 string]) string]{
     Returns the longest common substring between the two strings.
+}
 
-> (longest-common-sublabel label-1 label-2)
-
+@defproc[(longest-common-sublabel [label-1 label] [label-2 label]) label]{
     Returns the longest sublabel that's shared between label-1 and label-2.
+}
 
-> (path-label node)
-
+@defproc[(path-label [a-node node]) label]{
     Returns a new label that represents the path from the root to this
     node.
-
+}
 
 
 @section{Caveats}
