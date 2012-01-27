@@ -1,51 +1,50 @@
-_suffixtree_ : suffix trees in linear time
+#lang scribble/manual
+@(require planet/scribble
+          racket/sandbox
+          scribble/eval
+          (for-label "main.rkt"))
 
-Danny Yoo (dyoo@hkn.eecs.berkeley.edu)
 
+@(define my-evaluator
+   (call-with-trusted-sandbox-configuration 
+    (lambda ()
+      (parameterize ([sandbox-output 'string]
+                     [sandbox-error-output 'string])
+        (make-evaluator 'racket
+                        #:requires
+                        (list))))))
+
+
+@title{suffixtree : suffix trees in linear time}
+
+@author+email["Danny Yoo" "dyoo@hashcollision.org"]
 
 This is an implementation of suffix trees and their linear-time
 construction with the Ukkonen algorithm.  This implementation is based
 on notes from Gusfield, "Algorithms on Strings, Trees, and Sequences".
 
 
-Availability
-============
-
-To grab this package from PLaneT, 
-
-    (require (planet "suffixtree.ss" ("dyoo" "suffixtree.plt" 1)))
-
-The source will also be available here:
-
-    http://hkn.eecs.berkeley.edu/~dyoo/plt/suffixtree/
-
-
-Example
-=======
+@section{Example}
 
 Let's rush into a minimal example:
 
-    > (require (planet "suffixtree.ss" ("dyoo" "suffixtree.plt" 1)))
-    >
-    > (define tree (make-tree))
-    > (tree-add! tree (string->label "00010010$"))
-    >
-    > (define root (tree-root tree))
-    >
-    > (node-children root)
-    (#<struct:node> #<struct:node> #<struct:node>)
-    > (string->label (node-up-label 
-                            (car (node-children root))))
-    "$"
+@interaction[#:eval my-evaluator 
+(require (planet dyoo/suffixtree))
+(define tree (make-tree))
+(tree-add! tree (string->label "00010010$"))
+(define root (tree-root tree))
+(node-children root)
+(string->label (node-up-label (car (node-children root))))
+]
 
 
-Introduction
-============
+@section{Introduction}
 
 Suffix trees encode all the nonempty suffixes of a string.  For
 example, the string "0100101$" corresponds to the following suffix
 tree.
 
+@verbatim|{
    root
     |
     V
@@ -64,11 +63,12 @@ tree.
                +----- 0 --- 1$
                       |
                       +---- 0101$
+}|
 
 Every path from the root to any leaf spells out a suffix of the string
-"0100101$", and every suffix is accounted for.  This in itself might
-not sound too sexy, but by preprocessing a string as a suffix tree, we
-can then do some amazing things.
+@racket["0100101$"], and every suffix is accounted for.  This in
+itself might not sound too sexy, but by preprocessing a string as a
+suffix tree, we can then do some amazing things.
 
 For example, we can see if a substring is present in a suffix tree in
 time bounded by the length of the substring by following characters
@@ -85,21 +85,15 @@ below.
 
 
 
-
-Suffix Tree API
-===============
+@section{API}
 
 The API consists of the main suffix tree algorithm in suffixtree.ss,
-and auxillary utilities and applications in util.ss.
-
-
-_suffixtree.ss_
+and auxillary utilities and applications in @filepath{util.ss}.
 
 The main structures are trees, nodes, and labels.
 
 
-Trees
------
+@subsection{Trees}
 
 A suffix tree consists of a root.  This implementation allows multiple
 labels to be added to the tree.
@@ -152,8 +146,7 @@ labels to be added to the tree.
 
 
 
-Nodes
------
+@subsection{Nodes}
 
 Nodes form the structure of the suffix tree, and link up children
 nodes as well.  Every internal node I of a suffix tree will also have
@@ -185,8 +178,7 @@ a suffix-node whose path-label is the immediate suffix of node I.
     leaf, returns ().
 
 
-Labels
-------
+@subsection{Labels}
 
 Labels represent an immutable sequence of label-elements.
 Label-elements can be anything that compare with equal?, but the most
@@ -266,7 +258,7 @@ with efficiency.
 
 
 
-_util.ss_
+@subsection{Other utilities}
 
 This module provides some example applications of suffix trees.
 
@@ -285,16 +277,17 @@ This module provides some example applications of suffix trees.
 
 
 
-Caveats
-=======
+@section{Caveats}
 
 The code in tree-add! assumes that the construction of the full
 suffix tree on its input string is possible.  Certain strings don't
 have an full explicit suffix tree, such as "foo".
 
+@verbatim|{
     +-- "foo"
     |
     +-- "oo"
+}|
 
 In this case, when we try to construct a suffix tree out of "foo", we
 have an implicit suffix tree, where not every leaf corresponds to a
@@ -306,6 +299,7 @@ suffix tree, we'll often add a sentinel character at the end the
 string to make sure all suffixes have a unique path in the suffix
 tree.  For example, assuming that we use "$" as our sentinel:
 
+@verbatim|{
     +-- "foo$"
     |
     +-- "o" -- "o$"
@@ -313,32 +307,34 @@ tree.  For example, assuming that we use "$" as our sentinel:
     |    +---- "$"
     |
     +-- "$"
-   
+}|   
+
 The API has the function string->label/with-sentinel to automatically add
 a unique sentinel character at the end of a string.
 
-    (let ((tree (make-tree))
-          (label (string->label/with-sentinel "foo")))
-      (tree-add! label))
+@racketblock[
+(let ([tree (make-tree)]
+      [label (string->label/with-sentinel "foo")])
+  (tree-add! label))
+]
 
 so be sure to use this if you need to ensure the representation of all
 suffixes in the suffix tree.
 
 
 
-References
-==========
+@section{References}
 
 Dan Gusfield.  Algorithms on Strings, Trees, and Sequences: Computer
 Science and Computational Biology.  Cambridge University Press, New
 York, NY, 1997.
 
 Lloyd Allison.  Suffix Trees.
-http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Tree/Suffix/
+@url{http://www.allisons.org/ll/AlgDS/Tree/Suffix/}
 
 Mark Nelson.  Fast String Searching With Suffix Trees.  Dr. Dobb's
 Journal, August, 1996.
-http://www.dogma.net/markn/articles/suffixt/suffixt.htm
+@url{http://www.dogma.net/markn/articles/suffixt/suffixt.htm}
 
 Mummer: Ultra-fast alignment of large-scale DNA and protein sequences.
-http://mummer.sourceforge.net/
+@url{http://mummer.sourceforge.net/}
