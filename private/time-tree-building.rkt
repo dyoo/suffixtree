@@ -7,8 +7,6 @@
 ;; make-suffix-tree function.  s is the string used to construct the
 ;; tree.  Returns the amount of milliseconds taken to generate the tree.
 
-;(require (lib "errortrace.ss" "errortrace"))
-;(profiling-enabled #t)
 
 (require "label.rkt")
 (require "structs.rkt")

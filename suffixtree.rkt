@@ -1,8 +1,8 @@
 #lang racket/base
-(require (prefix-in u: "private/ukkonen2.ss")
-         (prefix-in l: "private/label.ss")
-         (prefix-in s: "private/structs.ss"))
-(require racket/contract)
+(require (prefix-in u: "private/ukkonen2.rkt")
+         (prefix-in l: "private/label.rkt")
+         (prefix-in s: "private/structs.rkt")
+         racket/contract)
 
 
 ;; Basic predicates

@@ -85,12 +85,12 @@ below.
 
 
 @section{API}
+@defmodule/this-package[main]
 
-The API consists of the main suffix tree algorithm in suffixtree.ss,
-and auxillary utilities and applications in @filepath{util.ss}.
+The API consists of the main suffix tree algorithm, and auxillary
+utilities and applications.
 
 The main structures are trees, nodes, and labels.
-
 
 @subsection{Trees}
 
