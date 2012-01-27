@@ -64,19 +64,14 @@
 ;;
 ;; Finds the first child node whose up-label starts with (label-ref
 ;; label 0).  If none can be found, returns #f.
-(define node-find-child
-  (letrec [
-           (loop
-            (lambda (label-element children)
-              (cond ((null? children) #f)
-                    ((label-element-equal?
-                      label-element
-                      (label-ref (node-up-label (first children)) 0))
-                     (first children))
-                    (else (loop label-element (rest children))))))
-           ]
-    (lambda (node label-element)
-      (loop label-element (node-children node)))))
+(define (node-find-child node label-element)
+  (define (loop children)
+    (cond ((null? children) #f)
+          ((label-element-equal? label-element (label-ref (node-up-label (first children)) 0))
+           (first children))
+          (else
+           (loop (rest children)))))
+  (loop (node-children node)))
 
 
 ;; node-up-split!: node number -> node

@@ -24,7 +24,14 @@
              (debug-on? #t))
            (define (disable)
              (debug-on? #f))
+
            (define-syntax (debug stx)
+             (syntax-case stx ()
+               ((_ format-string args (... ...))
+                (syntax/loc stx
+                  (void)))))
+           ;; debugging is off at the moment
+           #;(define-syntax (debug stx)
              (syntax-case stx ()
                ((_ format-string args (... ...))
                 (syntax/loc stx
