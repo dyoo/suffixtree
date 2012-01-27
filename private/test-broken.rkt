@@ -1,6 +1,7 @@
-(require "ukkonen2.ss")
-(require "label.ss")
-(require "structs.ss")
+#lang racket/base
+(require "ukkonen2.rkt"
+         "label.ss"
+         "structs.ss")
 
 ;;  (define tree (new-suffix-tree))
 ;;  (suffix-tree-add! tree (make-label "00000100$"))

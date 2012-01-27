@@ -1,3 +1,4 @@
+#lang racket/base
 ;; Program to do some timing of tree building.
 
 ;; time-implementation: string string -> number
@@ -9,9 +10,9 @@
 ;(require (lib "errortrace.ss" "errortrace"))
 ;(profiling-enabled #t)
 
-(require "label.ss")
-(require "structs.ss")
-(require (prefix ukkonen: "ukkonen2.ss"))
+(require "label.rkt")
+(require "structs.rkt")
+(require (prefix-in ukkonen: "ukkonen2.rkt"))
 
 
 (define (time-implementation string)
