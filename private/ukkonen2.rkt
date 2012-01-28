@@ -21,8 +21,8 @@
 ;;
 ;; We can call these functions to see what Ukkonen's algorithm is
 ;; really doing.
-(provide enable-ukkonen-debug-messages)
-(provide disable-ukkonen-debug-messages)
+#;(provide enable-ukkonen-debug-messages)
+#;(provide disable-ukkonen-debug-messages)
 
 
 ;; current-node->id: parameter of node -> string
@@ -61,26 +61,19 @@
 
 ;; Utility function for skip count, but also visible for those in
 ;; the know to skip-count from an arbitrary position in label.
-(define skip-count-helper
-  (letrec
-      [
-       (loop
-        (lambda (node label k N)
-          (let* ((child (node-find-child node (label-ref label k)))
-                 (child-label (node-up-label child))
-                 (child-label-length (label-length child-label))
-                 (rest-of-chars-left-to-skip (- N k)))
-            (if (> rest-of-chars-left-to-skip child-label-length)
-                (loop child
-                      label 
-                      (+ k child-label-length)
-                      N)
-                (values child rest-of-chars-left-to-skip)))))
-       ]
-    (lambda (node label k N)
-      (if (>= k N)
-          (values node (label-length (node-up-label node)))
-          (loop node label k N)))))
+(define (skip-count-helper node label k N)
+  (define (loop node k)
+    (let* ((child (node-find-child node (label-ref label k)))
+           (child-label (node-up-label child))
+           (child-label-length (label-length child-label))
+           (rest-of-chars-left-to-skip (- N k)))
+      (if (> rest-of-chars-left-to-skip child-label-length)
+          (loop child
+                (+ k child-label-length))
+          (values child rest-of-chars-left-to-skip))))
+  (if (>= k N)
+      (values node (label-length (node-up-label node)))
+      (loop node k)))
 
 
 
