@@ -151,12 +151,39 @@ For example:
     the matching had failed.
 
     The return value from tree-walk will either be @racket[A] or @racket[B].
+
+For example:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+(tree-add! a-tree (string->label "banana"))
+(define (success-f node up-label-offset)
+  (list node up-label-offset))
+(define (fail-f node up-label-offset input-label-offset)
+  (list node up-label-offset input-label-offset))
+(tree-walk a-tree (string->label "banana") success-f fail-f)
+(tree-walk a-tree (string->label "ban") success-f fail-f)
+(tree-walk a-tree (string->label "ana") success-f fail-f)
+(tree-walk a-tree (string->label "apple") success-f fail-f)
+]
 }
 
 @defproc[(tree-contains? [a-tree tree] [a-label label]) boolean]{
 
     Returns @racket[#t] if a path exists starting from the tree-root of the
     tree whose path-label exactly matches @racket[a-label].
+
+For example:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+(tree-add! a-tree (string->label "0100101$"))
+(tree-contains? a-tree (string->label "01"))
+(tree-contains? a-tree (string->label "001"))
+(tree-contains? a-tree (string->label "011"))
+(tree-contains? a-tree (string->label "0101"))]
+
+
+
+
 
     @racket[tree-contains?] is an application of @racket[tree-walk]:
 
@@ -175,10 +202,26 @@ Nodes form the structure of the suffix tree, and link up children
 nodes as well.  Every internal node I of a suffix tree will also have
 a suffix-node whose path-label is the immediate suffix of node I.
 
+For example, we can inspect the @racket[node-up-label] of each child of the root:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+(tree-add! a-tree 
+          (string->label "peter piper"))
+(for ([i (in-naturals)]
+      [c (node-children (tree-root a-tree))])
+  (printf "~a: ~a\n" i (label->string (node-up-label c))))
+
+(define p-node (node-find-child (tree-root a-tree) #\p))
+(for ([i (in-naturals)]
+      [c (node-children p-node)])
+  (printf "~a: ~a\n" i (label->string (node-up-label c))))
+]
+
 @defproc[(node-up-label [a-node node]) label]{
 
     Selects the label of the edge that connects this node to its
     parent.  The up-label of the root node is empty.
+
 }
 
 
