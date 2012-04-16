@@ -5,4 +5,5 @@
 (define scribblings '(("manual.scrbl" ())))
 (define url "http://hkn.eecs.berkeley.edu/~dyoo/plt/suffixtree")
 (define categories '(datastructures))
-
+(define repositories '("4.x"))
+(define release-notes '((p "Scribbled documentation.")))
