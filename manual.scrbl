@@ -2,7 +2,8 @@
 @(require planet/scribble
           racket/sandbox
           scribble/eval
-          (for-label "main.rkt"))
+          (for-label (this-package-in main)
+                     racket/base))
 
 
 @(define my-evaluator
@@ -100,19 +101,41 @@ labels to be added to the tree.
 
 @defproc[(make-tree) tree]{
 Constructs an empty suffix tree with a single root node.  
+
+For example:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+a-tree]
 }
 
 
 @defproc[(tree? [datum any]) boolean]{
-    Returns #t if datum is a suffix tree.
+Returns #t if datum is a suffix tree.
+
+For example:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+(tree? a-tree)]
 }
 
 @defproc[(tree-root [a-tree tree]) node]{
     Selects the root node from a tree.
+
+For example:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+(tree-root a-tree)]
 }
+
 
 @defproc[(tree-add! [a-tree tree] [a-label label]) void]{
     Adds a label and all of its nonempty suffixes to the tree.
+
+
+For example:
+@interaction[#:eval my-evaluator
+(define a-tree (make-tree))
+(tree-add! a-tree (string->label "supercalifragilisticexpialidocious"))]
 }
 
 
@@ -273,6 +296,12 @@ This module provides some example applications of suffix trees.
 
 @defproc[(longest-common-substring [string-1 string] [string-2 string]) string]{
     Returns the longest common substring between the two strings.
+
+For example:
+@interaction[#:eval my-evaluator
+(longest-common-substring 
+ "Lambda: the Ultimate Imperative"
+ "Procedure Call Implementations Considered Harmful, or, Lambda: the Ultimate GOTO")]
 }
 
 @defproc[(longest-common-sublabel [label-1 label] [label-2 label]) label]{
