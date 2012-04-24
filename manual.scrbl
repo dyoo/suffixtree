@@ -357,6 +357,73 @@ For example:
 }
 
 
+
+
+
+@section{Extended example: keyword search}
+
+@codeblock|{
+#lang racket/base
+
+(require (planet dyoo/suffixtree))
+
+;; String reference
+(struct sref (str))
+
+;; string->label*: string -> label
+;; Creates a label out of a string, but with a reference
+;; to the string at the end.
+(define (string->label* s)
+  (vector->label 
+   (list->vector (append (string->list s) (list (sref s))))))
+
+
+;; leaves: node -> (listof node)
+;; Get the leaves of the tree rooted at node.
+(define (leaves a-node)
+  (let loop ([a-node a-node]
+             [acc '()])
+    (define children (node-children a-node))
+    (cond [(eq? children '())
+           (cons a-node acc)]
+          [else
+           (foldl loop acc children)])))
+
+
+;; leaf-str: node -> string
+;; Given a leaf node, get back the string stored in the
+;; terminating sref element.
+(define (leaf-str a-leaf)
+  (define a-label (node-up-label a-leaf))
+  (sref-str (label-ref a-label (sub1 (label-length a-label)))))
+
+
+;; find-matches: tree string -> (listof string)
+(define (find-matches a-tree str)
+  (define (on-success node up-label-offset)
+    (map leaf-str (leaves node)))
+
+  (define (on-fail node up-label-offset input-label-offset)
+    '())
+  
+  (tree-walk a-tree
+             (string->label str)
+             on-success
+             on-fail))
+
+
+
+(define a-tree (make-tree))
+(tree-add! a-tree (string->label* "peter"))
+(tree-add! a-tree (string->label* "piper"))
+(tree-add! a-tree (string->label* "pepper"))
+
+(find-matches a-tree "per")
+(find-matches a-tree "ter")
+}|
+
+
+
 @section{Caveats}
 
 The code in tree-add! assumes that the construction of the full
